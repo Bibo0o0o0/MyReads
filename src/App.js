@@ -1,10 +1,12 @@
 import React from 'react'
-// import * as BooksAPI from './BooksAPI'
+import * as BooksAPI from './BooksAPI'
 import './App.css'
 import Router from 'react-router-dom'
+import Book from './Book/Book'
 
 class BooksApp extends React.Component {
   state = {
+    books:[],
     /**
      * TODO: Instead of using this state variable to keep track of which page
      * we're on, use the URL in the browser's address bar. This will ensure that
@@ -13,8 +15,26 @@ class BooksApp extends React.Component {
      */
     showSearchPage: false
   }
+  componentDidMount(){
+    let books = BooksAPI.getAll()
+    .then(response => {
+      let data = response
+      this.setState({books:data}, () =>{
+        console.log(this.state.books)
+      })
+    })
+  }
+
+  updateBook = (e, bookID) =>{
+    let books = [...this.state.books]
+    let bookIndex = books.findIndex(book => book.id === bookID)
+    books[bookIndex].shelf = e.target.value
+    this.setState({books: books})
+  }
 
   render() {
+    const test = this.state.books.filter(book => book.shelf === "wantToRead")
+    console.log(test)
     return (
       <div className="app">
         {this.state.showSearchPage ? (
@@ -92,6 +112,11 @@ class BooksApp extends React.Component {
                   <h2 className="bookshelf-title">Want to Read</h2>
                   <div className="bookshelf-books">
                     <ol className="books-grid">
+                      {this.state.books.filter(book => book.shelf === "wantToRead")
+                        .map(book => (
+                          <Book updateBook={this.updateBook} key={book.id} book={book}/>
+                        ))
+                      }
                       <li>
                         <div className="book">
                           <div className="book-top">
