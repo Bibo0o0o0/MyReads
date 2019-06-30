@@ -1,6 +1,7 @@
 import React from "react"
 
 const Book = (props) => {
+    const authors = props.book.authors ? (props.book.authors.length ? (<div className="book-authors">{props.book.authors.join(", ")}</div>) : null) : null
     return(
         <li>
             <div className="book">
@@ -17,7 +18,8 @@ const Book = (props) => {
                 </div>
                 </div>
                 <div className="book-title">{props.book.title}</div>
-                <div className="book-authors">{props.book.authors.join(", ")}</div>
+                {authors}
+                {/* <div className="book-authors">{props.book.authors.join(", ")}</div> */}
             </div>
         </li>
     )

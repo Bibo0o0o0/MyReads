@@ -1,9 +1,37 @@
 import React, {Component} from 'react'
 import '../App.css'
 import {Link} from 'react-router-dom'
+import Book from '../Book/Book'
+import * as BooksAPI from '../BooksAPI'
+
 
 class Search extends Component {
+    state={
+        books:[]
+    }
+    search = (e) => {
+        if(e.target.value === ""){
+            this.setState({books: []})
+            return
+        }
+        BooksAPI.search(e.target.value)
+        .then(response => {
+            let data = response
+            // console.log(data)
+            this.setState({books: data})
+        })
+    }
+    updateBook = (e, book) =>{
+        // let books = [...this.state.books]
+        // let bookIndex = books.findIndex(book => book.id === bookID)
+        // books[bookIndex].shelf = e.target.value
+        // this.setState({books: books})
+        BooksAPI.update(book, e.target.value)
+      }
     render() {
+        const books = this.state.books.length ? (
+            this.state.books.map(book => <Book key={book.id} updateBook={this.updateBook} book={book} />)
+        ) : null
         return (
             <div className="search-books">
                 <div className="search-books-bar">
@@ -19,12 +47,15 @@ class Search extends Component {
                       However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                       you don't find a specific author or title. Every search is limited by search terms.
                     */}
-                        <input type="text" placeholder="Search by title or author"/>
+                        <input type="text" onChange={this.search.bind(this)} placeholder="Search by title or author"/>
 
                     </div>
                 </div>
                 <div className="search-books-results">
-                    <ol className="books-grid"></ol>
+                    <ol className="books-grid">
+                        {/* {this.state.books.map(book => <Book key={book.id} updateBook={this.updateBook} book={book} />)} */}
+                        {books}
+                    </ol>
                 </div>
             </div>
         )
